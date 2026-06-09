@@ -4,7 +4,8 @@ class_name PlayerCameraHandler
 const CAMERA_DOWN_LIMIT: float = -90
 const CAMERA_UP_LIMIT: float = 90
 const FOV_CHANGE_SPRINT: float = 1.5
-const FOV_CHANGE_WALK: float = 0.5
+const FOV_CHANGE_RUNNING: float = 0.0
+const FOV_CHANGE_WALK: float = 0.0
 const BOB_FREQ: float = 2.0
 const BOB_AMP: float = 0.02
 
@@ -35,10 +36,9 @@ func handle_camera_physics(delta: float, movement_handler: PlayerMovementHandler
 
 
 func _handle_fov_change(delta: float, movement_handler: PlayerMovementHandler) -> void:
-	if movement_handler.is_sprinting or movement_handler.is_moving:
-		var fov_change = FOV_CHANGE_SPRINT if movement_handler.is_sprinting else FOV_CHANGE_WALK
-		var velocity_clamped = clamp(character.velocity.length(), 0.5, movement_handler.speed * 2)
-		var target_fov = GameManager.camera_config.fov + fov_change * velocity_clamped
+	if movement_handler.is_moving():
+		var velocity_clamped = clamp(character.velocity.length(), 0.5, movement_handler.current_speed() * 2)
+		var target_fov = GameManager.camera_config.fov + _current_fov_change(movement_handler) * velocity_clamped
 		
 		camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
 	elif character.is_on_floor():
@@ -58,3 +58,12 @@ func _handle_bobbing(delta: float) -> void:
 	else:
 		t_bob = 0.0
 		camera.transform.origin = camera.transform.origin.lerp(Vector3.ZERO, delta * 10.0)
+
+
+func _current_fov_change(movement_handler: PlayerMovementHandler) -> float:
+	if movement_handler.is_sprinting():
+		return FOV_CHANGE_SPRINT 
+	elif movement_handler.is_walking():
+		return FOV_CHANGE_WALK
+	else:
+		return FOV_CHANGE_RUNNING

@@ -1,23 +1,27 @@
 class_name PlayerMovementHandler
 
-const WALKING_SPEED: float = 0.5
-const JOGGING_SPEED: float = 5.0
-const SPRINTING_SPEED: float = 8.0
+
+enum MoveState {
+	Walking,
+	Sprinting,
+	Running
+}
+
+const WALKING_SPEED_MODIFIER: float = 0.2
+const SPRINTING_SPEED_MODIFIER: float = 1.6
+const CROUCH_SPEED_MODIFIER: float = 0.3
+const STANDARD_SPEED: float = 5.0
 const JUMP_VELOCITY: float = 4.5
 const STAND_HEIGHT: float = 2.0
 const CROUCH_HEIGHT: float = 0.5
-const CROUCH_SPEED_MODIFIER: float = 0.4
 const CROUCH_JUMP_MODIFIER: float = 0.8
 
 var character: CharacterBody3D
 var head: Node3D
 var camera: Camera3D
 var collision_shape: CapsuleShape3D
-var speed: float
-var is_sprinting: bool = false
-var is_moving: bool = false
+var current_move_state: MoveState = MoveState.Running
 var is_crouching: bool = false
-var is_walking: bool = false
 
 
 func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _collision_shape: CapsuleShape3D) -> void:
@@ -33,11 +37,37 @@ func handle_movement(delta: float) -> void:
 	
 	_add_gravity(delta)
 	_handle_jump()
-	_handle_move_speed()
+	_handle_move_state()
 	_handle_crouch()
 	_handle_movement(delta)
 	
 	character.move_and_slide()
+
+
+func current_speed() -> float:
+	var speed = STANDARD_SPEED
+	
+	if is_crouching:
+		speed *= CROUCH_SPEED_MODIFIER
+	
+	if current_move_state == MoveState.Sprinting:
+		speed *= SPRINTING_SPEED_MODIFIER
+	elif current_move_state == MoveState.Walking:
+		speed *= WALKING_SPEED_MODIFIER
+	
+	return speed
+
+
+func is_moving() -> bool:
+	return !character.velocity.is_zero_approx()
+
+
+func is_sprinting() -> bool:
+	return current_move_state == MoveState.Sprinting
+
+
+func is_walking() -> bool:
+	return current_move_state == MoveState.Walking
 
 
 func _add_gravity(delta: float) -> void:
@@ -60,16 +90,13 @@ func _handle_jump() -> void:
 		character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
 
 
-func _handle_move_speed() -> void:
+func _handle_move_state() -> void:
 	if Input.is_action_pressed("sprint") and character.is_on_floor() and !is_crouching:
-		speed = SPRINTING_SPEED 
-		is_sprinting = true
+		current_move_state = MoveState.Sprinting
 	elif Input.is_action_pressed("walk") and character.is_on_floor():
-		speed = WALKING_SPEED
-		is_sprinting = false
+		current_move_state = MoveState.Walking
 	else:
-		speed = JOGGING_SPEED * CROUCH_SPEED_MODIFIER if is_crouching else JOGGING_SPEED
-		is_sprinting = false
+		current_move_state = MoveState.Running
 
 
 func _handle_movement(delta: float) -> void:
@@ -78,15 +105,11 @@ func _handle_movement(delta: float) -> void:
 	
 	if character.is_on_floor():
 		if direction:
-			character.velocity.x = direction.x * speed
-			character.velocity.z = direction.z * speed
-			
-			is_moving = true
+			character.velocity.x = direction.x * current_speed()
+			character.velocity.z = direction.z * current_speed()
 		else:
-			character.velocity.x = lerp(character.velocity.x, direction.x * speed, delta * 8.0)
-			character.velocity.z = lerp(character.velocity.z, direction.z * speed, delta * 8.0)
-			
-			is_moving = false
+			character.velocity.x = lerp(character.velocity.x, direction.x * current_speed(), delta * 10.0)
+			character.velocity.z = lerp(character.velocity.z, direction.z * current_speed(), delta * 10.0)
 	else:
-		character.velocity.x = lerp(character.velocity.x, direction.x * speed, delta * 1.0)
-		character.velocity.z = lerp(character.velocity.z, direction.z * speed, delta * 1.0)
+		character.velocity.x = lerp(character.velocity.x, direction.x * current_speed(), delta * 1.0)
+		character.velocity.z = lerp(character.velocity.z, direction.z * current_speed(), delta * 1.0)
