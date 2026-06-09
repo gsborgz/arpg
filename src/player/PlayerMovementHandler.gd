@@ -28,7 +28,7 @@ func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _colli
 
 
 func handle_movement(delta: float) -> void:
-	if GameManager.menu_opened():
+	if GameManager.menu_opened:
 		return
 	
 	_add_gravity(delta)

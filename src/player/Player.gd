@@ -11,7 +11,7 @@ var CameraHandler = PlayerCameraHandler
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	camera.fov = GameManager.get_camera_fov()
+	camera.fov = GameManager.camera_config.fov
 	
 	MovementHandler = PlayerMovementHandler.new(self, head, camera, collision_shape.shape)
 	CameraHandler = PlayerCameraHandler.new(self, head, camera)
