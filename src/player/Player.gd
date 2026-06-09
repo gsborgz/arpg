@@ -23,4 +23,4 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	MovementHandler.handle_movement(delta)
-	CameraHandler.handle_fov_change(delta, MovementHandler)
+	CameraHandler.handle_camera_physics(delta, MovementHandler)

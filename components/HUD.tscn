@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://b625ae57oejh5"]
+
+[ext_resource type="Texture2D" uid="uid://u3ar02redwk0" path="res://assets/hud/crosshair.png" id="1_p67s8"]
+
+[node name="Hud" type="Node2D" unique_id=1775101402]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2067524639]
+texture_filter = 1
+position = Vector2(576, 324)
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("1_p67s8")
