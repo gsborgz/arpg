@@ -4,10 +4,10 @@ class_name PlayerMovementHandler
 const WALK_SPEED: float = 5.0
 const SPRINT_SPEED: float = 8.0
 const JUMP_VELOCITY: float = 4.5
-const CROUCH_HEIGHT: float = 0.5
 const STAND_HEIGHT: float = 2.0
+const CROUCH_HEIGHT: float = 0.5
 const CROUCH_SPEED_MODIFIER: float = 0.3
-const CROUCH_JUMP_MODIFIER: float = 1.5
+const CROUCH_JUMP_MODIFIER: float = 0.8
 
 var character: CharacterBody3D
 var head: Node3D
@@ -57,9 +57,6 @@ func _handle_crouch() -> void:
 func _handle_jump() -> void:
 	if Input.is_action_just_pressed("jump") and character.is_on_floor():
 		character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
-		
-		if is_crouching:
-			is_crouching = false
 
 
 func _handle_sprint() -> void:
