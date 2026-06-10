@@ -21,13 +21,16 @@ const CROUCH_JUMP_MODIFIER: float = 0.8
 const STAND_HEIGHT: float = 2.0
 const CROUCH_HEIGHT: float = 0.5
 const CROUCH_LERP_SPEED: float = 10.0
+const JUMP_STAMINA_COST: float = 5.0
 
 var character: CharacterBody3D
 var head: Node3D
 var camera: Camera3D
 var shape: CapsuleShape3D
+var stats: PlayerStats
 
 var movement_enabled: bool = true
+var sprint_enabled: bool = true
 var speed_multiplier: float = 1.0
 
 var _move_dir: Vector2 = Vector2.ZERO
@@ -46,11 +49,12 @@ var current_state: MoveState = MoveState.IDLE:
 var is_crouching: bool = false
 
 
-func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _shape: CapsuleShape3D) -> void:
+func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _shape: CapsuleShape3D, _stats: PlayerStats) -> void:
 	character = _character
 	head = _head
 	camera = _camera
 	shape = _shape
+	stats = _stats
 
 
 func handle_movement(delta: float) -> void:
@@ -58,14 +62,19 @@ func handle_movement(delta: float) -> void:
 	_add_gravity(delta)
 	_update_state()
 	_update_crouch(delta)
-	
+
+	var draining_stamina := false
+
 	if movement_enabled and not GameManager.menu_opened:
 		_handle_actions()
 		_apply_movement(delta)
+		
+		draining_stamina = is_moving() and is_sprinting()
 	else:
 		character.velocity.x = 0.0
 		character.velocity.z = 0.0
-	
+
+	stats.process_stamina(delta, draining_stamina)
 	character.move_and_slide()
 
 
@@ -116,6 +125,7 @@ func _add_gravity(delta: float) -> void:
 func _handle_actions() -> void:
 	if _jump_pressed and character.is_on_floor():
 		character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
+		stats.consume_stamina(JUMP_STAMINA_COST)
 	
 	if _crouch_pressed and character.is_on_floor():
 		if is_crouching:
@@ -141,7 +151,7 @@ func _update_state() -> void:
 		current_state = MoveState.IDLE
 		return
 	
-	if _sprint_held and not is_crouching:
+	if _sprint_held and not is_crouching and sprint_enabled and not stats.is_sprint_blocked():
 		current_state = MoveState.SPRINTING
 	elif _walk_held:
 		current_state = MoveState.WALKING

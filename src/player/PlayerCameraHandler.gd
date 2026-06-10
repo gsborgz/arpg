@@ -12,13 +12,16 @@ const BOB_AMP: float = 0.02
 var character: CharacterBody3D
 var head: Node3D
 var camera: Camera3D
+var movement_handler: PlayerMovementHandler
+
 var t_bob: float = 0.0
 
 
-func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D) -> void:
+func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _movement_handler: PlayerMovementHandler) -> void:
 	character = _character
 	head = _head
 	camera = _camera
+	movement_handler = _movement_handler
 
 
 func handle_camera_rotation(event: InputEvent) -> void:
@@ -30,12 +33,12 @@ func handle_camera_rotation(event: InputEvent) -> void:
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(CAMERA_DOWN_LIMIT), deg_to_rad(CAMERA_UP_LIMIT))
 
 
-func handle_camera_physics(delta: float, movement_handler: PlayerMovementHandler) -> void:
-	_handle_fov_change(delta, movement_handler)
+func handle_camera_physics(delta: float) -> void:
+	_handle_fov_change(delta)
 	_handle_bobbing(delta)
 
 
-func _handle_fov_change(delta: float, movement_handler: PlayerMovementHandler) -> void:
+func _handle_fov_change(delta: float) -> void:
 	if movement_handler.is_moving():
 		var velocity_clamped = clamp(character.velocity.length(), 0.5, movement_handler.current_speed() * 2)
 		var target_fov = GameManager.camera_config.fov + _current_fov_change(movement_handler) * velocity_clamped

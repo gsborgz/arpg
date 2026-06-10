@@ -1,11 +1,47 @@
 [gd_scene format=3 uid="uid://b625ae57oejh5"]
 
 [ext_resource type="Texture2D" uid="uid://u3ar02redwk0" path="res://assets/hud/crosshair.png" id="1_p67s8"]
+[ext_resource type="Script" uid="uid://bloawaivx5di2" path="res://src/Hud.gd" id="2_hud"]
 
 [node name="Hud" type="Node2D" unique_id=1775101402]
+script = ExtResource("2_hud")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2067524639]
 texture_filter = 1
 position = Vector2(576, 324)
 scale = Vector2(0.05, 0.05)
 texture = ExtResource("1_p67s8")
+
+[node name="Stats" type="HBoxContainer" parent="." unique_id=1004994997]
+offset_right = 144.0
+offset_bottom = 77.0
+
+[node name="Label" type="VBoxContainer" parent="Stats" unique_id=541220981]
+layout_mode = 2
+
+[node name="Health" type="Label" parent="Stats/Label" unique_id=559027878]
+layout_mode = 2
+text = "Health:"
+
+[node name="Mana" type="Label" parent="Stats/Label" unique_id=2064127503]
+layout_mode = 2
+text = "Mana:"
+
+[node name="Stamina" type="Label" parent="Stats/Label" unique_id=248519287]
+layout_mode = 2
+text = "Stamina:"
+
+[node name="Value" type="VBoxContainer" parent="Stats" unique_id=811056148]
+layout_mode = 2
+
+[node name="Health" type="Label" parent="Stats/Value" unique_id=1832849794]
+layout_mode = 2
+text = "0"
+
+[node name="Mana" type="Label" parent="Stats/Value" unique_id=1620044225]
+layout_mode = 2
+text = "0"
+
+[node name="Stamina" type="Label" parent="Stats/Value" unique_id=1117709375]
+layout_mode = 2
+text = "0"
