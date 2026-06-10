@@ -4,7 +4,7 @@ extends Node
 var menu_opened: bool = false
 
 # Configs.
-var camera_config = CameraConfig.new()
+var camera_config: CameraConfig = CameraConfig.new()
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -7,8 +7,8 @@ extends CanvasLayer
 
 
 func _ready() -> void:
-	if PlayerManager.StatsHandler:
-		_connect_stats(PlayerManager.StatsHandler)
+	if PlayerManager.stats_handler:
+		_connect_stats(PlayerManager.stats_handler)
 	else:
 		PlayerManager.stats_handler_ready.connect(_connect_stats)
 

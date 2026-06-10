@@ -14,15 +14,15 @@ func _ready():
 	PlayerManager.camera = camera
 	PlayerManager.shape = collision_shape.shape
 	PlayerManager.character = self
-	PlayerManager.StatsHandler = PlayerStatsHandler.new()
-	PlayerManager.MovementHandler = PlayerMovementHandler.new()
-	PlayerManager.CameraHandler = PlayerCameraHandler.new()
+	PlayerManager.stats_handler = PlayerStatsHandler.new()
+	PlayerManager.movement_handler = PlayerMovementHandler.new()
+	PlayerManager.camera_handler = PlayerCameraHandler.new()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	PlayerManager.CameraHandler.handle_camera_rotation(event)
+	PlayerManager.camera_handler.handle_camera_rotation(event)
 
 
 func _physics_process(delta: float) -> void:
-	PlayerManager.MovementHandler.handle_movement(delta)
-	PlayerManager.CameraHandler.handle_camera_physics(delta)
+	PlayerManager.movement_handler.handle_movement(delta)
+	PlayerManager.camera_handler.handle_camera_physics(delta)

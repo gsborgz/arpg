@@ -10,13 +10,14 @@ const RECOVERY_DELAY: float = 2.0
 const REGEN_RATE: float = 10.0
 const DRAIN_RATE: float = 10.0
 
-var BASE_HEALTH: float = 50
-var BASE_MANA: float = 50
-var BASE_STAMINA: float = 50
+# TODO: valores base dos stats devem depender de calculo com base nos atributos do personagem
+const BASE_HEALTH: float = 50
+const BASE_MANA: float = 50
+const BASE_STAMINA: float = 50
 
-var current_health: float = 50
-var current_mana: float = 50
-var current_stamina: float = 50
+var current_health: float = BASE_HEALTH
+var current_mana: float = BASE_MANA
+var current_stamina: float = BASE_STAMINA
 
 var _depleted_cooldown_timer: float = 0.0
 var _recovery_delay_timer: float = 0.0

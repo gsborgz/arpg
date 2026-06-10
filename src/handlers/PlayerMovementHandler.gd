@@ -16,6 +16,7 @@ const BASE_SPEED: float = 5.0
 const WALKING_SPEED_MODIFIER: float = 0.2
 const SPRINTING_SPEED_MODIFIER: float = 1.6
 const CROUCH_SPEED_MODIFIER: float = 0.3
+const CROUCH_WALK_SPEED_MODIFIER: float = 0.15
 const JUMP_VELOCITY: float = 4.5
 const CROUCH_JUMP_MODIFIER: float = 0.8
 const STAND_HEIGHT: float = 2.0
@@ -60,27 +61,29 @@ func handle_movement(delta: float) -> void:
 		PlayerManager.character.velocity.x = 0.0
 		PlayerManager.character.velocity.z = 0.0
 
-	PlayerManager.StatsHandler.process_stamina(delta, draining_stamina)
+	PlayerManager.stats_handler.process_stamina(delta, draining_stamina)
 	PlayerManager.character.move_and_slide()
 
 
 func current_speed() -> float:
 	var speed := BASE_SPEED
-	
+
 	match current_state:
 		MoveState.WALKING:
-			speed *= WALKING_SPEED_MODIFIER * 1.5 if is_crouching else WALKING_SPEED_MODIFIER
+			speed *= CROUCH_WALK_SPEED_MODIFIER if is_crouching else WALKING_SPEED_MODIFIER
+		MoveState.RUNNING:
+			if is_crouching:
+				speed *= CROUCH_SPEED_MODIFIER
 		MoveState.SPRINTING:
 			speed *= SPRINTING_SPEED_MODIFIER
-	
-	if is_crouching:
-		speed *= CROUCH_SPEED_MODIFIER
-	
+
 	return speed * speed_multiplier
 
 
 func is_moving() -> bool:
-	return not Vector2(PlayerManager.character.velocity.x, PlayerManager.character.velocity.z).is_zero_approx()
+	var velocity := PlayerManager.character.velocity
+	
+	return absf(velocity.x) > 0.001 or absf(velocity.z) > 0.001
 
 
 func is_airborne() -> bool:
@@ -111,11 +114,12 @@ func _add_gravity(delta: float) -> void:
 func _handle_actions() -> void:
 	if _jump_pressed and PlayerManager.character.is_on_floor():
 		PlayerManager.character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
-		PlayerManager.StatsHandler.consume_stamina(JUMP_STAMINA_COST)
+		PlayerManager.stats_handler.consume_stamina(JUMP_STAMINA_COST)
 	
 	if _crouch_pressed and PlayerManager.character.is_on_floor():
 		if is_crouching:
-			var space_needed := STAND_HEIGHT - PlayerManager.shape.height
+			var space_needed = STAND_HEIGHT - PlayerManager.shape.height
+			
 			if not PlayerManager.character.test_move(PlayerManager.character.transform, Vector3.UP * space_needed):
 				is_crouching = false
 		else:
@@ -137,7 +141,7 @@ func _update_state() -> void:
 		current_state = MoveState.IDLE
 		return
 	
-	if _sprint_held and not is_crouching and sprint_enabled and not PlayerManager.StatsHandler.is_sprint_blocked():
+	if _sprint_held and not is_crouching and sprint_enabled and not PlayerManager.stats_handler.is_sprint_blocked():
 		current_state = MoveState.SPRINTING
 	elif _walk_held:
 		current_state = MoveState.WALKING
