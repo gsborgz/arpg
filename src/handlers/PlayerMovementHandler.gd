@@ -1,5 +1,5 @@
 class_name PlayerMovementHandler
-extends RefCounted
+
 
 signal state_changed(new_state: MoveState)
 

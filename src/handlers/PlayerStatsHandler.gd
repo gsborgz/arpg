@@ -1,5 +1,6 @@
 class_name PlayerStatsHandler
 
+
 signal health_changed(current: float, max_value: float)
 signal mana_changed(current: float, max_value: float)
 signal stamina_changed(current: float, max_value: float)
