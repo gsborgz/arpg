@@ -20,11 +20,12 @@ const JUMP_VELOCITY: float = 4.5
 const CROUCH_JUMP_MODIFIER: float = 0.8
 const STAND_HEIGHT: float = 2.0
 const CROUCH_HEIGHT: float = 0.5
+const CROUCH_LERP_SPEED: float = 10.0
 
 var character: CharacterBody3D
 var head: Node3D
 var camera: Camera3D
-var collision_shape: CapsuleShape3D
+var shape: CapsuleShape3D
 
 var movement_enabled: bool = true
 var speed_multiplier: float = 1.0
@@ -42,33 +43,29 @@ var current_state: MoveState = MoveState.IDLE:
 		current_state = value
 		state_changed.emit(current_state)
 
-var is_crouching: bool = false:
-	set(value):
-		is_crouching = value
-		if collision_shape:
-			collision_shape.height = CROUCH_HEIGHT if value else STAND_HEIGHT
+var is_crouching: bool = false
 
 
-func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _collision_shape: CapsuleShape3D) -> void:
+func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _shape: CapsuleShape3D) -> void:
 	character = _character
 	head = _head
 	camera = _camera
-	collision_shape = _collision_shape
+	shape = _shape
 
 
 func handle_movement(delta: float) -> void:
 	_read_input()
 	_add_gravity(delta)
 	_update_state()
-
+	_update_crouch(delta)
+	
 	if movement_enabled and not GameManager.menu_opened:
-		_handle_jump()
-		_handle_crouch()
+		_handle_actions()
 		_apply_movement(delta)
 	else:
 		character.velocity.x = 0.0
 		character.velocity.z = 0.0
-
+	
 	character.move_and_slide()
 
 
@@ -77,7 +74,7 @@ func current_speed() -> float:
 	
 	match current_state:
 		MoveState.WALKING:
-			speed *= WALKING_SPEED_MODIFIER
+			speed *= WALKING_SPEED_MODIFIER * 1.5 if is_crouching else WALKING_SPEED_MODIFIER
 		MoveState.SPRINTING:
 			speed *= SPRINTING_SPEED_MODIFIER
 	
@@ -92,7 +89,7 @@ func is_moving() -> bool:
 
 
 func is_airborne() -> bool:
-	return current_state == MoveState.JUMPING or current_state == MoveState.FALLING
+	return current_state in [MoveState.JUMPING, MoveState.FALLING]
 
 
 func is_sprinting() -> bool:
@@ -116,29 +113,34 @@ func _add_gravity(delta: float) -> void:
 		character.velocity += character.get_gravity() * delta
 
 
-func _handle_crouch() -> void:
-	if _crouch_pressed and character.is_on_floor():
-		is_crouching = !is_crouching
-
-
-func _handle_jump() -> void:
+func _handle_actions() -> void:
 	if _jump_pressed and character.is_on_floor():
 		character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
+	
+	if _crouch_pressed and character.is_on_floor():
+		if is_crouching:
+			var space_needed := STAND_HEIGHT - shape.height
+			if not character.test_move(character.transform, Vector3.UP * space_needed):
+				is_crouching = false
+		else:
+			is_crouching = true
+
+
+func _update_crouch(delta: float) -> void:
+	var target_height := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
+	
+	shape.height = lerp(shape.height, target_height, delta * CROUCH_LERP_SPEED)
 
 
 func _update_state() -> void:
 	if not character.is_on_floor():
 		current_state = MoveState.JUMPING if character.velocity.y > 0.0 else MoveState.FALLING
 		return
-
-	if not movement_enabled or GameManager.menu_opened:
+	
+	if not movement_enabled or GameManager.menu_opened or _move_dir.length_squared() == 0.0:
 		current_state = MoveState.IDLE
 		return
-
-	if _move_dir.length_squared() == 0.0:
-		current_state = MoveState.IDLE
-		return
-
+	
 	if _sprint_held and not is_crouching:
 		current_state = MoveState.SPRINTING
 	elif _walk_held:
@@ -151,6 +153,6 @@ func _apply_movement(delta: float) -> void:
 	var direction := (head.transform.basis * Vector3(_move_dir.x, 0, _move_dir.y)).normalized()
 	var speed := current_speed()
 	var friction := 10.0 if character.is_on_floor() else 1.0
-
+	
 	character.velocity.x = lerp(character.velocity.x, direction.x * speed, delta * friction)
 	character.velocity.z = lerp(character.velocity.z, direction.z * speed, delta * friction)
