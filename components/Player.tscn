@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://ci46xcsjbs4eq"]
 
 [ext_resource type="Script" uid="uid://be3jqbcldd5xq" path="res://src/Player.gd" id="1_18mme"]
-[ext_resource type="PackedScene" uid="uid://b625ae57oejh5" path="res://components/HUD.tscn" id="2_5grgn"]
+[ext_resource type="PackedScene" uid="uid://dcngvihybyqu5" path="res://components/HUD.tscn" id="2_5grgn"]
+[ext_resource type="Texture2D" uid="uid://u3ar02redwk0" path="res://assets/hud/crosshair.png" id="2_ujuip"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_lucva"]
 
@@ -21,6 +22,31 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72556967, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head" unique_id=1331418427]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=869202366]
+[node name="CameraHUD" type="CanvasLayer" parent="Head/Camera3D" unique_id=2004250457]
 
-[node name="Hud" parent="CanvasLayer" unique_id=1775101402 instance=ExtResource("2_5grgn")]
+[node name="Control" type="Control" parent="Head/Camera3D/CameraHUD" unique_id=1715401434]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="Head/Camera3D/CameraHUD/Control" unique_id=403271514]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_ujuip")
+expand_mode = 1
+
+[node name="PlayerHUD" parent="." unique_id=921747280 instance=ExtResource("2_5grgn")]

@@ -1,9 +1,9 @@
-extends Node2D
+extends CanvasLayer
 
 
-@onready var health_value: Label = $Stats/Value/Health
-@onready var mana_value: Label = $Stats/Value/Mana
-@onready var stamina_value: Label = $Stats/Value/Stamina
+@onready var health_value: Label = $StatsControl/Stats/Value/Health
+@onready var mana_value: Label = $StatsControl/Stats/Value/Mana
+@onready var stamina_value: Label = $StatsControl/Stats/Value/Stamina
 
 
 func _ready() -> void:

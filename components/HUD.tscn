@@ -1,47 +1,50 @@
-[gd_scene format=3 uid="uid://b625ae57oejh5"]
+[gd_scene format=3 uid="uid://dcngvihybyqu5"]
 
-[ext_resource type="Texture2D" uid="uid://u3ar02redwk0" path="res://assets/hud/crosshair.png" id="1_p67s8"]
-[ext_resource type="Script" uid="uid://bloawaivx5di2" path="res://src/Hud.gd" id="2_hud"]
+[ext_resource type="Script" uid="uid://bloawaivx5di2" path="res://src/Hud.gd" id="1_24pax"]
 
-[node name="Hud" type="Node2D" unique_id=1775101402]
-script = ExtResource("2_hud")
+[node name="Hud" type="CanvasLayer" unique_id=921747280]
+script = ExtResource("1_24pax")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2067524639]
-texture_filter = 1
-position = Vector2(576, 324)
-scale = Vector2(0.05, 0.05)
-texture = ExtResource("1_p67s8")
+[node name="StatsControl" type="Control" parent="." unique_id=1965517333]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="Stats" type="HBoxContainer" parent="." unique_id=1004994997]
+[node name="Stats" type="HBoxContainer" parent="StatsControl" unique_id=1004994997]
+layout_mode = 0
 offset_right = 144.0
 offset_bottom = 77.0
 
-[node name="Label" type="VBoxContainer" parent="Stats" unique_id=541220981]
+[node name="Label" type="VBoxContainer" parent="StatsControl/Stats" unique_id=541220981]
 layout_mode = 2
 
-[node name="Health" type="Label" parent="Stats/Label" unique_id=559027878]
+[node name="Health" type="Label" parent="StatsControl/Stats/Label" unique_id=559027878]
 layout_mode = 2
 text = "Health:"
 
-[node name="Mana" type="Label" parent="Stats/Label" unique_id=2064127503]
+[node name="Mana" type="Label" parent="StatsControl/Stats/Label" unique_id=2064127503]
 layout_mode = 2
 text = "Mana:"
 
-[node name="Stamina" type="Label" parent="Stats/Label" unique_id=248519287]
+[node name="Stamina" type="Label" parent="StatsControl/Stats/Label" unique_id=248519287]
 layout_mode = 2
 text = "Stamina:"
 
-[node name="Value" type="VBoxContainer" parent="Stats" unique_id=811056148]
+[node name="Value" type="VBoxContainer" parent="StatsControl/Stats" unique_id=811056148]
 layout_mode = 2
 
-[node name="Health" type="Label" parent="Stats/Value" unique_id=1832849794]
-layout_mode = 2
-text = "0"
-
-[node name="Mana" type="Label" parent="Stats/Value" unique_id=1620044225]
+[node name="Health" type="Label" parent="StatsControl/Stats/Value" unique_id=1832849794]
 layout_mode = 2
 text = "0"
 
-[node name="Stamina" type="Label" parent="Stats/Value" unique_id=1117709375]
+[node name="Mana" type="Label" parent="StatsControl/Stats/Value" unique_id=1620044225]
+layout_mode = 2
+text = "0"
+
+[node name="Stamina" type="Label" parent="StatsControl/Stats/Value" unique_id=1117709375]
 layout_mode = 2
 text = "0"
