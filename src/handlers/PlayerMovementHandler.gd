@@ -23,12 +23,6 @@ const CROUCH_HEIGHT: float = 0.5
 const CROUCH_LERP_SPEED: float = 10.0
 const JUMP_STAMINA_COST: float = 5.0
 
-var character: CharacterBody3D
-var head: Node3D
-var camera: Camera3D
-var shape: CapsuleShape3D
-var stats: PlayerStats
-
 var movement_enabled: bool = true
 var sprint_enabled: bool = true
 var speed_multiplier: float = 1.0
@@ -49,14 +43,6 @@ var current_state: MoveState = MoveState.IDLE:
 var is_crouching: bool = false
 
 
-func _init(_character: CharacterBody3D, _head: Node3D, _camera: Camera3D, _shape: CapsuleShape3D, _stats: PlayerStats) -> void:
-	character = _character
-	head = _head
-	camera = _camera
-	shape = _shape
-	stats = _stats
-
-
 func handle_movement(delta: float) -> void:
 	_read_input()
 	_add_gravity(delta)
@@ -71,11 +57,11 @@ func handle_movement(delta: float) -> void:
 		
 		draining_stamina = is_moving() and is_sprinting()
 	else:
-		character.velocity.x = 0.0
-		character.velocity.z = 0.0
+		PlayerManager.character.velocity.x = 0.0
+		PlayerManager.character.velocity.z = 0.0
 
-	stats.process_stamina(delta, draining_stamina)
-	character.move_and_slide()
+	PlayerManager.StatsHandler.process_stamina(delta, draining_stamina)
+	PlayerManager.character.move_and_slide()
 
 
 func current_speed() -> float:
@@ -94,7 +80,7 @@ func current_speed() -> float:
 
 
 func is_moving() -> bool:
-	return not Vector2(character.velocity.x, character.velocity.z).is_zero_approx()
+	return not Vector2(PlayerManager.character.velocity.x, PlayerManager.character.velocity.z).is_zero_approx()
 
 
 func is_airborne() -> bool:
@@ -118,19 +104,19 @@ func _read_input() -> void:
 
 
 func _add_gravity(delta: float) -> void:
-	if not character.is_on_floor():
-		character.velocity += character.get_gravity() * delta
+	if not PlayerManager.character.is_on_floor():
+		PlayerManager.character.velocity += PlayerManager.character.get_gravity() * delta
 
 
 func _handle_actions() -> void:
-	if _jump_pressed and character.is_on_floor():
-		character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
-		stats.consume_stamina(JUMP_STAMINA_COST)
+	if _jump_pressed and PlayerManager.character.is_on_floor():
+		PlayerManager.character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
+		PlayerManager.StatsHandler.consume_stamina(JUMP_STAMINA_COST)
 	
-	if _crouch_pressed and character.is_on_floor():
+	if _crouch_pressed and PlayerManager.character.is_on_floor():
 		if is_crouching:
-			var space_needed := STAND_HEIGHT - shape.height
-			if not character.test_move(character.transform, Vector3.UP * space_needed):
+			var space_needed := STAND_HEIGHT - PlayerManager.shape.height
+			if not PlayerManager.character.test_move(PlayerManager.character.transform, Vector3.UP * space_needed):
 				is_crouching = false
 		else:
 			is_crouching = true
@@ -139,19 +125,19 @@ func _handle_actions() -> void:
 func _update_crouch(delta: float) -> void:
 	var target_height := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
 	
-	shape.height = lerp(shape.height, target_height, delta * CROUCH_LERP_SPEED)
+	PlayerManager.shape.height = lerp(PlayerManager.shape.height, target_height, delta * CROUCH_LERP_SPEED)
 
 
 func _update_state() -> void:
-	if not character.is_on_floor():
-		current_state = MoveState.JUMPING if character.velocity.y > 0.0 else MoveState.FALLING
+	if not PlayerManager.character.is_on_floor():
+		current_state = MoveState.JUMPING if PlayerManager.character.velocity.y > 0.0 else MoveState.FALLING
 		return
 	
 	if not movement_enabled or GameManager.menu_opened or _move_dir.length_squared() == 0.0:
 		current_state = MoveState.IDLE
 		return
 	
-	if _sprint_held and not is_crouching and sprint_enabled and not stats.is_sprint_blocked():
+	if _sprint_held and not is_crouching and sprint_enabled and not PlayerManager.StatsHandler.is_sprint_blocked():
 		current_state = MoveState.SPRINTING
 	elif _walk_held:
 		current_state = MoveState.WALKING
@@ -160,9 +146,9 @@ func _update_state() -> void:
 
 
 func _apply_movement(delta: float) -> void:
-	var direction := (head.transform.basis * Vector3(_move_dir.x, 0, _move_dir.y)).normalized()
+	var direction := (PlayerManager.head.transform.basis * Vector3(_move_dir.x, 0, _move_dir.y)).normalized()
 	var speed := current_speed()
-	var friction := 10.0 if character.is_on_floor() else 1.0
+	var friction := 10.0 if PlayerManager.character.is_on_floor() else 1.0
 	
-	character.velocity.x = lerp(character.velocity.x, direction.x * speed, delta * friction)
-	character.velocity.z = lerp(character.velocity.z, direction.z * speed, delta * friction)
+	PlayerManager.character.velocity.x = lerp(PlayerManager.character.velocity.x, direction.x * speed, delta * friction)
+	PlayerManager.character.velocity.z = lerp(PlayerManager.character.velocity.z, direction.z * speed, delta * friction)

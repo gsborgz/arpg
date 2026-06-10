@@ -7,13 +7,13 @@ extends Node2D
 
 
 func _ready() -> void:
-	if GameManager.player_stats:
-		_connect_stats(GameManager.player_stats)
+	if PlayerManager.StatsHandler:
+		_connect_stats(PlayerManager.StatsHandler)
 	else:
-		GameManager.player_ready.connect(_connect_stats)
+		PlayerManager.stats_handler_ready.connect(_connect_stats)
 
 
-func _connect_stats(stats: PlayerStats) -> void:
+func _connect_stats(stats: PlayerStatsHandler) -> void:
 	stats.health_changed.connect(_on_health_changed)
 	stats.mana_changed.connect(_on_mana_changed)
 	stats.stamina_changed.connect(_on_stamina_changed)
