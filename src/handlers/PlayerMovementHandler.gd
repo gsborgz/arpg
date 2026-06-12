@@ -17,7 +17,8 @@ const WALKING_SPEED_MODIFIER: float = 0.2
 const SPRINTING_SPEED_MODIFIER: float = 1.6
 const CROUCH_SPEED_MODIFIER: float = 0.3
 const CROUCH_WALK_SPEED_MODIFIER: float = 0.15
-const JUMP_VELOCITY: float = 4.5
+const JUMP_FORCE: float = 6.5
+const FALL_SPEED: float = 2.0
 const CROUCH_JUMP_MODIFIER: float = 0.8
 const STAND_HEIGHT: float = 2.0
 const CROUCH_HEIGHT: float = 0.5
@@ -108,12 +109,12 @@ func _read_input() -> void:
 
 func _add_gravity(delta: float) -> void:
 	if not PlayerManager.character.is_on_floor():
-		PlayerManager.character.velocity += PlayerManager.character.get_gravity() * delta
+		PlayerManager.character.velocity += PlayerManager.character.get_gravity() * delta * FALL_SPEED
 
 
 func _handle_actions() -> void:
-	if _jump_pressed and PlayerManager.character.is_on_floor():
-		PlayerManager.character.velocity.y = JUMP_VELOCITY * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_VELOCITY
+	if _jump_pressed and PlayerManager.character.is_on_floor() and PlayerManager.stats_handler.has_stamina(JUMP_STAMINA_COST):
+		PlayerManager.character.velocity.y = JUMP_FORCE * CROUCH_JUMP_MODIFIER if is_crouching else JUMP_FORCE
 		PlayerManager.stats_handler.consume_stamina(JUMP_STAMINA_COST)
 	
 	if _crouch_pressed and PlayerManager.character.is_on_floor():

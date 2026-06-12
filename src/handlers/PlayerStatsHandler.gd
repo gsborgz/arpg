@@ -68,5 +68,9 @@ func consume_stamina(amount: float) -> void:
 		_recovery_delay_timer = RECOVERY_DELAY
 
 
+func has_stamina(amount: float) -> bool:
+	return current_stamina >= amount and _depleted_cooldown_timer <= 0.0
+
+
 func is_sprint_blocked() -> bool:
 	return current_stamina == 0.0 or _depleted_cooldown_timer > 0.0
