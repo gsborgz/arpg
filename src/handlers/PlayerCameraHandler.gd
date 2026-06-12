@@ -15,6 +15,8 @@ const ZOOM_MIN: float = 0.0
 const ZOOM_MIN_TP: float = 1.5
 const ZOOM_MAX: float = 4.0
 const ZOOM_LERP_SPEED: float = 5.0
+const TP_CAMERA_X_OFFSET: float = 0.5
+const OFFSET_LERP_SPEED: float = 5.0
 
 var t_bob: float = 0.0
 var _target_spring_length: float = 0.0
@@ -32,6 +34,7 @@ func handle_camera_input(event: InputEvent) -> void:
 
 func handle_camera_physics(delta: float) -> void:
 	_handle_zoom(delta)
+	_handle_camera_tp_offset(delta)
 	_handle_mesh_visibility()
 	_handle_fov_change(delta)
 	_handle_bobbing(delta)
@@ -57,6 +60,16 @@ func _handle_zoom(delta: float) -> void:
 	PlayerManager.spring_arm.spring_length = new_length
 
 
+func _handle_camera_tp_offset(delta: float) -> void:
+	var target_x: float = 0.0 if _is_first_person() else TP_CAMERA_X_OFFSET
+	
+	PlayerManager.spring_arm.position.x = lerpf(
+		PlayerManager.spring_arm.position.x,
+		target_x,
+		delta * OFFSET_LERP_SPEED
+	)
+
+
 func _handle_mesh_visibility() -> void:
 	PlayerManager.mesh.visible = !_is_first_person()
 
@@ -74,15 +87,13 @@ func _handle_fov_change(delta: float) -> void:
 func _handle_bobbing(delta: float) -> void:
 	if PlayerManager.character.is_on_floor() and PlayerManager.character.velocity.length() > 0.1:
 		t_bob += delta * PlayerManager.character.velocity.length()
-		
-		var pos := Vector3.ZERO
-		pos.y = sin(t_bob * BOB_FREQ) * BOB_AMP
-		pos.x = cos(t_bob * BOB_FREQ / 2) * BOB_AMP
-		
-		PlayerManager.camera.transform.origin = pos
+
+		PlayerManager.spring_arm.position.y = sin(t_bob * BOB_FREQ) * BOB_AMP
+		PlayerManager.camera.transform.origin.x = cos(t_bob * BOB_FREQ / 2) * BOB_AMP
 	else:
 		t_bob = 0.0
-		PlayerManager.camera.transform.origin = PlayerManager.camera.transform.origin.lerp(Vector3.ZERO, delta * 10.0)
+		PlayerManager.spring_arm.position.y = lerpf(PlayerManager.spring_arm.position.y, 0.0, delta * 10.0)
+		PlayerManager.camera.transform.origin.x = lerpf(PlayerManager.camera.transform.origin.x, 0.0, delta * 10.0)
 
 
 func _handle_camera_rotation(event: InputEvent) -> void:
