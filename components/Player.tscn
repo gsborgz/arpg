@@ -20,11 +20,15 @@ shape = SubResource("CapsuleShape3D_18mme")
 [node name="Head" type="Node3D" parent="." unique_id=1114085238]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72556967, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Head" unique_id=1331418427]
+[node name="SpringArm3D" type="SpringArm3D" parent="Head" unique_id=312948765]
+spring_length = 0.0
+margin = 0.3
 
-[node name="CameraHUD" type="CanvasLayer" parent="Head/Camera3D" unique_id=2004250457]
+[node name="Camera3D" type="Camera3D" parent="Head/SpringArm3D" unique_id=1331418427]
 
-[node name="Control" type="Control" parent="Head/Camera3D/CameraHUD" unique_id=1715401434]
+[node name="CameraHUD" type="CanvasLayer" parent="Head/SpringArm3D/Camera3D" unique_id=2004250457]
+
+[node name="Control" type="Control" parent="Head/SpringArm3D/Camera3D/CameraHUD" unique_id=1715401434]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,7 +37,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="Head/Camera3D/CameraHUD/Control" unique_id=403271514]
+[node name="TextureRect" type="TextureRect" parent="Head/SpringArm3D/Camera3D/CameraHUD/Control" unique_id=403271514]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
