@@ -7,8 +7,8 @@ signal stamina_changed(current: float, max_value: float)
 
 const DEPLETED_COOLDOWN: float = 5.0
 const RECOVERY_DELAY: float = 2.0
-const REGEN_RATE: float = 10.0
-const DRAIN_RATE: float = 10.0
+const REGEN_RATE: float = 2.0
+const DRAIN_RATE: float = 6.0
 
 # TODO: valores base dos stats devem depender de calculo com base nos atributos do personagem
 const BASE_HEALTH: float = 50
