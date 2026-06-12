@@ -48,3 +48,22 @@ text = "0"
 [node name="Stamina" type="Label" parent="StatsControl/Stats/Value" unique_id=1117709375]
 layout_mode = 2
 text = "0"
+
+[node name="TimeControl" type="Control" parent="StatsControl" unique_id=777123456]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -108.0
+offset_right = -8.0
+offset_top = 8.0
+offset_bottom = 34.0
+grow_horizontal = 0
+
+[node name="TimeLabel" type="Label" parent="StatsControl/TimeControl" unique_id=888234567]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "00:00"
+horizontal_alignment = 2

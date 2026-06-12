@@ -5,31 +5,11 @@
 [ext_resource type="Material" uid="uid://p2nkjd3ge3qm" path="res://materials/Blue.tres" id="3_1gkf0"]
 [ext_resource type="Material" uid="uid://bi1h4xe7msjwi" path="res://materials/Pink.tres" id="3_y2j1u"]
 [ext_resource type="Material" uid="uid://b122sws3pt7w7" path="res://materials/Red.tres" id="4_y2j1u"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_rdnwj"]
-sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-
-[sub_resource type="Sky" id="Sky_1gkf0"]
-sky_material = SubResource("ProceduralSkyMaterial_rdnwj")
-
-[sub_resource type="Environment" id="Environment_y2j1u"]
-background_mode = 2
-sky = SubResource("Sky_1gkf0")
-tonemap_mode = 2
-glow_enabled = true
+[ext_resource type="PackedScene" uid="uid://ttaqugykyub6" path="res://components/Sky.tscn" id="6_mhcr1"]
 
 [node name="TestZone" type="Node3D" unique_id=870281680]
 
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=637041735]
-transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
-shadow_enabled = true
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2136544371]
-environment = SubResource("Environment_y2j1u")
-
-[node name="Player" parent="." unique_id=698875991 instance=ExtResource("2_4chxg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+[node name="Sky" parent="." unique_id=1386892528 instance=ExtResource("6_mhcr1")]
 
 [node name="Map" type="Node3D" parent="." unique_id=935771731]
 
@@ -80,3 +60,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.27975, -0.096021175, -0.686
 use_collision = true
 size = Vector3(2, 2, 2)
 material = ExtResource("3_1gkf0")
+
+[node name="Player" parent="." unique_id=698875991 instance=ExtResource("2_4chxg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
