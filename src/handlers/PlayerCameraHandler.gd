@@ -1,8 +1,6 @@
 class_name PlayerCameraHandler
 
 
-enum CameraMode { FIRST_PERSON, THIRD_PERSON }
-
 const CAMERA_DOWN_LIMIT_FP: float = deg_to_rad(-90)
 const CAMERA_UP_LIMIT_FP: float = deg_to_rad(90)
 const CAMERA_DOWN_LIMIT_TP: float = deg_to_rad(-80)
@@ -61,11 +59,11 @@ func _handle_zoom(delta: float) -> void:
 
 
 func _handle_camera_tp_offset(delta: float) -> void:
-	var target_x: float = 0.0 if _is_first_person() else TP_CAMERA_X_OFFSET
+	var target_offset: float = 0.0 if _is_first_person() else TP_CAMERA_X_OFFSET
 	
-	PlayerManager.spring_arm.position.x = lerpf(
-		PlayerManager.spring_arm.position.x,
-		target_x,
+	PlayerManager.camera.h_offset = lerpf(
+		PlayerManager.camera.h_offset,
+		target_offset,
 		delta * OFFSET_LERP_SPEED
 	)
 
@@ -87,13 +85,10 @@ func _handle_fov_change(delta: float) -> void:
 func _handle_bobbing(delta: float) -> void:
 	if PlayerManager.character.is_on_floor() and PlayerManager.character.velocity.length() > 0.1:
 		t_bob += delta * PlayerManager.character.velocity.length()
-
-		PlayerManager.spring_arm.position.y = sin(t_bob * BOB_FREQ) * BOB_AMP
-		PlayerManager.camera.transform.origin.x = cos(t_bob * BOB_FREQ / 2) * BOB_AMP
+		PlayerManager.camera.v_offset = sin(t_bob * BOB_FREQ) * BOB_AMP
 	else:
 		t_bob = 0.0
-		PlayerManager.spring_arm.position.y = lerpf(PlayerManager.spring_arm.position.y, 0.0, delta * 10.0)
-		PlayerManager.camera.transform.origin.x = lerpf(PlayerManager.camera.transform.origin.x, 0.0, delta * 10.0)
+		PlayerManager.camera.v_offset = lerpf(PlayerManager.camera.v_offset, 0.0, delta * 10.0)
 
 
 func _handle_camera_rotation(event: InputEvent) -> void:
