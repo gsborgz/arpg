@@ -45,11 +45,16 @@ func _handle_zoom(delta: float) -> void:
 	if Input.is_action_just_pressed("cam_mode"):
 		_target_spring_length = ZOOM_MIN_TP if _is_first_person() else ZOOM_MIN
 
-	PlayerManager.spring_arm.spring_length = lerp(
+	var new_length: float = lerpf(
 		PlayerManager.spring_arm.spring_length,
 		_target_spring_length,
 		delta * ZOOM_LERP_SPEED
 	)
+
+	if absf(new_length - _target_spring_length) < 0.01:
+		new_length = _target_spring_length
+
+	PlayerManager.spring_arm.spring_length = new_length
 
 
 func _handle_mesh_visibility() -> void:
