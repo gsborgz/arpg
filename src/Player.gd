@@ -4,7 +4,7 @@ extends CharacterBody3D
 @onready var head: Node3D = $Head
 @onready var spring_arm: SpringArm3D = $Head/SpringArm3D
 @onready var camera: Camera3D = $Head/SpringArm3D/Camera3D
-@onready var mesh: MeshInstance3D = $MeshInstance3D
+@onready var mesh: Node3D = $Character
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 

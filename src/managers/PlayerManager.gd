@@ -5,7 +5,7 @@ var character: CharacterBody3D
 var head: Node3D
 var spring_arm: SpringArm3D
 var camera: Camera3D
-var mesh: MeshInstance3D
+var mesh: Node3D
 var shape: Shape3D
 
 signal stats_handler_ready(stats: PlayerStatsHandler)

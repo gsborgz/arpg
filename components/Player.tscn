@@ -11,7 +11,9 @@
 [node name="Player" type="CharacterBody3D" unique_id=698875991]
 script = ExtResource("1_18mme")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1348292115]
+[node name="Character" type="Node3D" parent="." unique_id=69159325]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Character" unique_id=1348292115]
 mesh = SubResource("CapsuleMesh_lucva")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=638842620]
