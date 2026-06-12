@@ -1,8 +1,6 @@
 class_name PlayerMovementHandler
 
 
-signal state_changed(new_state: MoveState)
-
 enum MoveState {
 	IDLE,
 	WALKING,
@@ -28,21 +26,14 @@ const JUMP_STAMINA_COST: float = 5.0
 var movement_enabled: bool = true
 var sprint_enabled: bool = true
 var speed_multiplier: float = 1.0
+var current_state: MoveState = MoveState.IDLE
+var is_crouching: bool = false
 
 var _move_dir: Vector2 = Vector2.ZERO
 var _jump_pressed: bool = false
 var _crouch_pressed: bool = false
 var _sprint_held: bool = false
 var _walk_held: bool = false
-
-var current_state: MoveState = MoveState.IDLE:
-	set(value):
-		if value == current_state:
-			return
-		current_state = value
-		state_changed.emit(current_state)
-
-var is_crouching: bool = false
 
 
 func handle_movement(delta: float) -> void:
