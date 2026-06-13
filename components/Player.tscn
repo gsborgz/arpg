@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://be3jqbcldd5xq" path="res://src/Player.gd" id="1_18mme"]
 [ext_resource type="PackedScene" uid="uid://dcngvihybyqu5" path="res://components/HUD.tscn" id="2_5grgn"]
 [ext_resource type="Texture2D" uid="uid://u3ar02redwk0" path="res://assets/hud/crosshair.png" id="2_ujuip"]
+[ext_resource type="PackedScene" path="res://components/RestMenu.tscn" id="4_fems0"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_lucva"]
 
@@ -57,3 +58,5 @@ texture = ExtResource("2_ujuip")
 expand_mode = 1
 
 [node name="PlayerHUD" parent="." unique_id=921747280 instance=ExtResource("2_5grgn")]
+
+[node name="RestMenu" parent="." unique_id=2133165005 instance=ExtResource("4_fems0")]

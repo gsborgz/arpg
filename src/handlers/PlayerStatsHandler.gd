@@ -9,6 +9,8 @@ const DEPLETED_COOLDOWN: float = 5.0
 const RECOVERY_DELAY: float = 2.0
 const REGEN_RATE: float = 2.0
 const DRAIN_RATE: float = 6.0
+const HEALTH_REGEN_RATE: float = 2.0
+const MANA_REGEN_RATE: float = 2.0
 
 # TODO: valores base dos stats devem depender de calculo com base nos atributos do personagem
 const BASE_HEALTH: float = 50
@@ -18,6 +20,8 @@ const BASE_STAMINA: float = 50
 var current_health: float = BASE_HEALTH
 var current_mana: float = BASE_MANA
 var current_stamina: float = BASE_STAMINA
+
+var time_scale: float = 1.0
 
 var _depleted_cooldown_timer: float = 0.0
 var _recovery_delay_timer: float = 0.0
@@ -49,14 +53,20 @@ func process_stamina(delta: float, is_draining: bool) -> void:
 				_recovery_delay_timer = RECOVERY_DELAY
 
 		if _depleted_cooldown_timer > 0.0:
-			_depleted_cooldown_timer -= delta
+			_depleted_cooldown_timer -= delta * time_scale
 		elif _recovery_delay_timer > 0.0:
-			_recovery_delay_timer -= delta
+			_recovery_delay_timer -= delta * time_scale
 		else:
-			current_stamina = clamp(current_stamina + REGEN_RATE * delta, 0.0, BASE_STAMINA)
+			current_stamina = clamp(current_stamina + REGEN_RATE * time_scale * delta, 0.0, BASE_STAMINA)
 
 	if current_stamina != prev_stamina:
 		stamina_changed.emit(current_stamina, BASE_STAMINA)
+
+	if time_scale > 1.0:
+		if current_health < BASE_HEALTH:
+			update_current_health(HEALTH_REGEN_RATE * time_scale * delta)
+		if current_mana < BASE_MANA:
+			update_current_mana(MANA_REGEN_RATE * time_scale * delta)
 
 
 func consume_stamina(amount: float) -> void:

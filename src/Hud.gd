@@ -6,34 +6,29 @@ extends CanvasLayer
 @onready var stamina_value: Label = $StatsControl/Stats/Value/Stamina
 @onready var time_label: Label = $StatsControl/TimeControl/TimeLabel
 
-var _tod: TimeOfDay
-
-
 func _ready() -> void:
 	if PlayerManager.stats_handler:
 		_connect_stats(PlayerManager.stats_handler)
 	else:
 		PlayerManager.stats_handler_ready.connect(_connect_stats)
-	
-	call_deferred("_connect_time")
+
+	if TimeManager.tod:
+		_connect_time(TimeManager.tod)
+	else:
+		TimeManager.tod_ready.connect(_connect_time, CONNECT_ONE_SHOT)
 
 
 func _connect_stats(stats: PlayerStatsHandler) -> void:
 	stats.health_changed.connect(_on_health_changed)
 	stats.mana_changed.connect(_on_mana_changed)
 	stats.stamina_changed.connect(_on_stamina_changed)
-	
+
 	health_value.text = str(roundi(stats.current_health))
 	mana_value.text = str(roundi(stats.current_mana))
 	stamina_value.text = str(roundi(stats.current_stamina))
 
 
-func _connect_time() -> void:
-	_tod = get_tree().root.find_child("TimeOfDay", true, false) as TimeOfDay
-	
-	if not _tod:
-		return
-	
+func _connect_time(_tod: TimeOfDay) -> void:
 	time_label.text = _tod.game_time.left(5)
 	_tod.minute_changed.connect(_on_minute_changed)
 
@@ -51,4 +46,4 @@ func _on_stamina_changed(current: float, _max_value: float) -> void:
 
 
 func _on_minute_changed(_minute: int) -> void:
-	time_label.text = _tod.game_time.left(5)
+	time_label.text = TimeManager.tod.game_time.left(5)
